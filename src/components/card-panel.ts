@@ -32,14 +32,18 @@ export class CardPanel extends LitElement {
       align-items: center;
     }
 
-    label {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-      font-size: 0.9rem;
-      color: #687280;
-      flex: 1;
+    textarea.note-input {
+      width: 100%;
+      resize: none;
+      min-height: 3.2em;
+      max-height: 4.8em;
+      padding: 0.45rem 0.6rem;
+      border: 1px solid #949ba4;
+      border-radius: 0.5rem;
+      font: inherit;
+      box-sizing: border-box;
     }
+
 
     select,
     input[type='number'] {
@@ -56,41 +60,54 @@ export class CardPanel extends LitElement {
     }
   `;
 
-  @property() label = 'Card';
   @property() cardId = '';
+  @property({ type: String }) note = '';
   @property({ type: String }) rarity: Rarity = 'Common';
   @property({ type: Number }) level = 1;
   @property({ type: Number }) cost = 0;
 
   protected updated(changedProperties: PropertyValues<this>) {
     if (changedProperties.has('rarity') || changedProperties.has('level')) {
-      debugger;
       this.cost = CARD_COSTS[this.rarity][this.level - 1];
     }
   }
 
   private handleRarityChange(event: Event) {
-    debugger;
     const target = event.target as HTMLSelectElement;
     this.dispatchCardChange(target.value as Rarity, this.level);
   }
 
   private handleLevelChange(event: Event) {
-    debugger;
     const target = event.target as HTMLInputElement;
     const level = Number(target.value);
     this.dispatchCardChange(this.rarity, level);
   }
 
+
   private dispatchCardChange(rarity: Rarity, level: number) {
-    debugger;
     const detail: CardChangeDetail = {
       cardId: this.cardId,
       rarity,
-      level
+      level,
+      note: this.note
     };
 
     this.dispatchEvent(new CustomEvent<CardChangeDetail>('card-change', {
+      detail,
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  private dispatchNoteChange(note: string) {
+    const detail: CardChangeDetail = {
+      cardId: this.cardId,
+      rarity: this.rarity,
+      level: this.level,
+      note
+    };
+
+    this.dispatchEvent(new CustomEvent<CardChangeDetail>('card-note-change', {
       detail,
       bubbles: true,
       composed: true
@@ -101,9 +118,15 @@ export class CardPanel extends LitElement {
     return html`
       <section class="panel">
         <div class="row">
-          <h3>${this.label}</h3>
           <div class="cost">Cost: ${this.cost}</div>
         </div>
+
+        <textarea
+          class="note-input"
+          rows="2"
+          maxlength="80"          
+          textalign="center"         
+        ></textarea>
 
         <label>
           Rarity
