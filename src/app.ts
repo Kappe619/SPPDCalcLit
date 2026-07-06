@@ -10,6 +10,8 @@ const initialCards: CardConfig[] = Array.from({ length: 12 }, (_, index) => ({
   level: 1
 }));
 
+debugger;
+
 @customElement('sppd-app')
 export class SppdApp extends LitElement {
   static styles = css`
@@ -73,9 +75,11 @@ export class SppdApp extends LitElement {
       align-items: center;
       flex-wrap: wrap;
       padding: 1rem 1.25rem;
-      background: white;
-      border: 1px solid #e2e8f0;
+      background: #e5e7eb;
+      color: #0f172a;
+      border: 1px solid #d1d5db;
       border-radius: 1rem;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
     }
 
     label {
@@ -96,8 +100,24 @@ export class SppdApp extends LitElement {
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(4, minmax(220px, 1fr));
+      grid-template-rows: repeat(3, minmax(180px, auto));
       gap: 1rem;
+      align-items: start;
+    }
+
+    @media (max-width: 1100px) {
+      .grid {
+        grid-template-columns: repeat(2, minmax(220px, 1fr));
+        grid-template-rows: repeat(6, minmax(180px, auto));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(12, minmax(180px, auto));
+      }
     }
   `;
 
@@ -105,6 +125,7 @@ export class SppdApp extends LitElement {
   @state() private availableCaps = 0;
 
   private handleCardChange(event: Event) {
+    debugger;
     const customEvent = event as CustomEvent<CardChangeDetail>;
     const { cardId, rarity, level } = customEvent.detail;
 
@@ -114,6 +135,7 @@ export class SppdApp extends LitElement {
   }
 
   private getTotalCost() {
+    debugger;
     return this.cards.reduce((sum, card) => sum + CARD_COSTS[card.rarity][card.level - 1], 0);
   }
 
@@ -122,11 +144,13 @@ export class SppdApp extends LitElement {
   }
 
   private updateCaps(event: Event) {
+    debugger;
     const target = event.target as HTMLInputElement;
     this.availableCaps = Number(target.value || 0);
   }
 
   render() {
+    debugger;
     const totalCost = this.getTotalCost();
     const buffer = this.getBuffer();
 
@@ -154,6 +178,7 @@ export class SppdApp extends LitElement {
         <section class="grid" @card-change=${this.handleCardChange}>
           ${this.cards.map((card, index) => html`
             <card-panel
+              style="grid-column: ${index % 4 + 1}; grid-row: ${Math.floor(index / 4) + 1};"
               .cardId=${card.id}
               .label=${`Card ${index + 1}`}
               .rarity=${card.rarity}
