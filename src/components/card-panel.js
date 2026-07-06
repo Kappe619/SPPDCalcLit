@@ -10,37 +10,52 @@ import { CARD_COSTS, RARITY_OPTIONS } from '../data.js';
 let CardPanel = class CardPanel extends LitElement {
     constructor() {
         super(...arguments);
-        this.label = 'Card';
         this.cardId = '';
+        this.note = '';
         this.rarity = 'Common';
         this.level = 1;
         this.cost = 0;
     }
     updated(changedProperties) {
         if (changedProperties.has('rarity') || changedProperties.has('level')) {
-            debugger;
             this.cost = CARD_COSTS[this.rarity][this.level - 1];
         }
     }
     handleRarityChange(event) {
-        debugger;
         const target = event.target;
         this.dispatchCardChange(target.value, this.level);
     }
     handleLevelChange(event) {
-        debugger;
         const target = event.target;
         const level = Number(target.value);
         this.dispatchCardChange(this.rarity, level);
     }
+    handleNoteInput(event) {
+        const target = event.target;
+        this.note = target.value;
+        this.dispatchNoteChange(target.value);
+    }
     dispatchCardChange(rarity, level) {
-        debugger;
         const detail = {
             cardId: this.cardId,
             rarity,
-            level
+            level,
+            note: this.note
         };
         this.dispatchEvent(new CustomEvent('card-change', {
+            detail,
+            bubbles: true,
+            composed: true
+        }));
+    }
+    dispatchNoteChange(note) {
+        const detail = {
+            cardId: this.cardId,
+            rarity: this.rarity,
+            level: this.level,
+            note
+        };
+        this.dispatchEvent(new CustomEvent('card-note-change', {
             detail,
             bubbles: true,
             composed: true
@@ -50,9 +65,17 @@ let CardPanel = class CardPanel extends LitElement {
         return html `
       <section class="panel">
         <div class="row">
-          <h3>${this.label}</h3>
           <div class="cost">Cost: ${this.cost}</div>
         </div>
+
+        <textarea
+          class="note-input"
+          rows="2"
+          maxlength="80"
+          placeholder="Short note"
+          .value=${this.note}
+          @input=${this.handleNoteInput}
+        ></textarea>
 
         <label>
           Rarity
@@ -102,14 +125,18 @@ CardPanel.styles = css `
       align-items: center;
     }
 
-    label {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-      font-size: 0.9rem;
-      color: #687280;
-      flex: 1;
+    textarea.note-input {
+      width: 100%;
+      resize: none;
+      min-height: 3.2em;
+      max-height: 4.8em;
+      padding: 0.45rem 0.6rem;
+      border: 1px solid #949ba4;
+      border-radius: 0.5rem;
+      font: inherit;
+      box-sizing: border-box;
     }
+
 
     select,
     input[type='number'] {
@@ -127,10 +154,10 @@ CardPanel.styles = css `
   `;
 __decorate([
     property()
-], CardPanel.prototype, "label", void 0);
-__decorate([
-    property()
 ], CardPanel.prototype, "cardId", void 0);
+__decorate([
+    property({ type: String })
+], CardPanel.prototype, "note", void 0);
 __decorate([
     property({ type: String })
 ], CardPanel.prototype, "rarity", void 0);

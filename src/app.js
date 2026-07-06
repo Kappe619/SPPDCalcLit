@@ -21,25 +21,26 @@ let SppdApp = class SppdApp extends LitElement {
         this.availableCaps = 0;
     }
     handleCardChange(event) {
-        debugger;
         const customEvent = event;
-        const { cardId, rarity, level } = customEvent.detail;
-        this.cards = this.cards.map((card) => card.id === cardId ? { ...card, rarity, level } : card);
+        const { cardId, rarity, level, note } = customEvent.detail;
+        this.cards = this.cards.map((card) => card.id === cardId ? { ...card, rarity, level, note: note ?? card.note } : card);
+    }
+    handleNoteChange(event) {
+        const customEvent = event;
+        const { cardId, note } = customEvent.detail;
+        this.cards = this.cards.map((card) => card.id === cardId ? { ...card, note: note ?? card.note } : card);
     }
     getTotalCost() {
-        debugger;
         return this.cards.reduce((sum, card) => sum + CARD_COSTS[card.rarity][card.level - 1], 0);
     }
     getBuffer() {
         return this.availableCaps - this.getTotalCost();
     }
     updateCaps(event) {
-        debugger;
         const target = event.target;
         this.availableCaps = Number(target.value || 0);
     }
     render() {
-        debugger;
         const totalCost = this.getTotalCost();
         const buffer = this.getBuffer();
         return html `
@@ -63,12 +64,12 @@ let SppdApp = class SppdApp extends LitElement {
           <div>12 cards • live cost updates</div>
         </section>
 
-        <section class="grid" @card-change=${this.handleCardChange}>
+        <section class="grid" @card-change=${this.handleCardChange} @card-note-change=${this.handleNoteChange}>
           ${this.cards.map((card, index) => html `
             <card-panel
               style="grid-column: ${index % 4 + 1}; grid-row: ${Math.floor(index / 4) + 1};"
               .cardId=${card.id}
-              .label=${`Card ${index + 1}`}
+              .note=${card.note || ''}
               .rarity=${card.rarity}
               .level=${card.level}
             ></card-panel>
