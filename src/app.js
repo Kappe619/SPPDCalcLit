@@ -13,6 +13,7 @@ const initialCards = Array.from({ length: 12 }, (_, index) => ({
     rarity: 'Common',
     level: 1
 }));
+debugger;
 let SppdApp = class SppdApp extends LitElement {
     constructor() {
         super(...arguments);
@@ -20,21 +21,25 @@ let SppdApp = class SppdApp extends LitElement {
         this.availableCaps = 0;
     }
     handleCardChange(event) {
+        debugger;
         const customEvent = event;
         const { cardId, rarity, level } = customEvent.detail;
         this.cards = this.cards.map((card) => card.id === cardId ? { ...card, rarity, level } : card);
     }
     getTotalCost() {
+        debugger;
         return this.cards.reduce((sum, card) => sum + CARD_COSTS[card.rarity][card.level - 1], 0);
     }
     getBuffer() {
         return this.availableCaps - this.getTotalCost();
     }
     updateCaps(event) {
+        debugger;
         const target = event.target;
         this.availableCaps = Number(target.value || 0);
     }
     render() {
+        debugger;
         const totalCost = this.getTotalCost();
         const buffer = this.getBuffer();
         return html `
@@ -61,6 +66,7 @@ let SppdApp = class SppdApp extends LitElement {
         <section class="grid" @card-change=${this.handleCardChange}>
           ${this.cards.map((card, index) => html `
             <card-panel
+              style="grid-column: ${index % 4 + 1}; grid-row: ${Math.floor(index / 4) + 1};"
               .cardId=${card.id}
               .label=${`Card ${index + 1}`}
               .rarity=${card.rarity}
@@ -133,9 +139,11 @@ SppdApp.styles = css `
       align-items: center;
       flex-wrap: wrap;
       padding: 1rem 1.25rem;
-      background: white;
-      border: 1px solid #e2e8f0;
+      background: #e5e7eb;
+      color: #0f172a;
+      border: 1px solid #d1d5db;
       border-radius: 1rem;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
     }
 
     label {
@@ -156,8 +164,24 @@ SppdApp.styles = css `
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(4, minmax(220px, 1fr));
+      grid-template-rows: repeat(3, minmax(180px, auto));
       gap: 1rem;
+      align-items: start;
+    }
+
+    @media (max-width: 1100px) {
+      .grid {
+        grid-template-columns: repeat(2, minmax(220px, 1fr));
+        grid-template-rows: repeat(6, minmax(180px, auto));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(12, minmax(180px, auto));
+      }
     }
   `;
 __decorate([

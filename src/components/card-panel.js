@@ -18,19 +18,23 @@ let CardPanel = class CardPanel extends LitElement {
     }
     updated(changedProperties) {
         if (changedProperties.has('rarity') || changedProperties.has('level')) {
+            debugger;
             this.cost = CARD_COSTS[this.rarity][this.level - 1];
         }
     }
     handleRarityChange(event) {
+        debugger;
         const target = event.target;
         this.dispatchCardChange(target.value, this.level);
     }
     handleLevelChange(event) {
+        debugger;
         const target = event.target;
         const level = Number(target.value);
         this.dispatchCardChange(this.rarity, level);
     }
     dispatchCardChange(rarity, level) {
+        debugger;
         const detail = {
             cardId: this.cardId,
             rarity,
@@ -80,10 +84,10 @@ CardPanel.styles = css `
       display: grid;
       gap: 0.75rem;
       padding: 1rem;
-      border: 1px solid #d5d7db;
+      border: 1px solid #989ca1;
       border-radius: 0.75rem;
-      background: white;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      background: #9ca3af;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
     }
 
     .panel h3 {
@@ -103,13 +107,13 @@ CardPanel.styles = css `
       flex-direction: column;
       gap: 0.25rem;
       font-size: 0.9rem;
-      color: #4b5563;
+      color: #687280;
       flex: 1;
     }
 
     select,
     input[type='number'] {
-      border: 1px solid #cbd5e1;
+      border: 1px solid #949ba4;
       border-radius: 0.5rem;
       padding: 0.45rem 0.6rem;
       font: inherit;
