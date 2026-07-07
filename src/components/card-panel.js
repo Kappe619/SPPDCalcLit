@@ -72,7 +72,6 @@ let CardPanel = class CardPanel extends LitElement {
           class="note-input"
           rows="2"
           maxlength="80"
-          placeholder="Short note"
           .value=${this.note}
           @input=${this.handleNoteInput}
         ></textarea>

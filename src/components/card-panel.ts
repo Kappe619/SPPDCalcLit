@@ -130,8 +130,7 @@ export class CardPanel extends LitElement {
         <textarea
           class="note-input"
           rows="2"
-          maxlength="80"
-          placeholder="Short note"
+          maxlength="80"          
           .value=${this.note}
           @input=${this.handleNoteInput}
         ></textarea>
