@@ -8,3 +8,11 @@ body {
 * {
   box-sizing: border-box;
 }
+
+.control-box input {
+  width: 7rem;  
+  padding: 0.4rem;
+  border: 1px solid #949ba4;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+}

@@ -54,9 +54,10 @@ export class CardPanel extends LitElement {
     }
 
     .cost {
-      font-weight: 700;
+      font-weight: 800;
       color: #0f172a;
       text-align: right;
+      font-size: 1rem;
     }
   `;
 
@@ -83,6 +84,11 @@ export class CardPanel extends LitElement {
     this.dispatchCardChange(this.rarity, level);
   }
 
+  private handleNoteInput(event: Event) {
+    const target = event.target as HTMLTextAreaElement;
+    this.note = target.value;
+    this.dispatchNoteChange(target.value);
+  }
 
   private dispatchCardChange(rarity: Rarity, level: number) {
     const detail: CardChangeDetail = {
@@ -124,8 +130,10 @@ export class CardPanel extends LitElement {
         <textarea
           class="note-input"
           rows="2"
-          maxlength="80"          
-          textalign="center"         
+          maxlength="80"
+          placeholder="Short note"
+          .value=${this.note}
+          @input=${this.handleNoteInput}
         ></textarea>
 
         <label>
