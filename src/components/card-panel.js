@@ -30,6 +30,11 @@ let CardPanel = class CardPanel extends LitElement {
         const level = Number(target.value);
         this.dispatchCardChange(this.rarity, level);
     }
+    handleNoteInput(event) {
+        const target = event.target;
+        this.note = target.value;
+        this.dispatchNoteChange(target.value);
+    }
     dispatchCardChange(rarity, level) {
         const detail = {
             cardId: this.cardId,
@@ -66,8 +71,10 @@ let CardPanel = class CardPanel extends LitElement {
         <textarea
           class="note-input"
           rows="2"
-          maxlength="80"          
-          textalign="center"         
+          maxlength="80"
+          placeholder="Short note"
+          .value=${this.note}
+          @input=${this.handleNoteInput}
         ></textarea>
 
         <label>
@@ -140,9 +147,10 @@ CardPanel.styles = css `
     }
 
     .cost {
-      font-weight: 700;
+      font-weight: 800;
       color: #0f172a;
       text-align: right;
+      font-size: 1rem;
     }
   `;
 __decorate([

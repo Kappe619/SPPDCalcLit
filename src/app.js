@@ -25,6 +25,11 @@ let SppdApp = class SppdApp extends LitElement {
         const { cardId, rarity, level, note } = customEvent.detail;
         this.cards = this.cards.map((card) => card.id === cardId ? { ...card, rarity, level, note: note ?? card.note } : card);
     }
+    handleNoteChange(event) {
+        const customEvent = event;
+        const { cardId, note } = customEvent.detail;
+        this.cards = this.cards.map((card) => card.id === cardId ? { ...card, note: note ?? card.note } : card);
+    }
     getTotalCost() {
         return this.cards.reduce((sum, card) => sum + CARD_COSTS[card.rarity][card.level - 1], 0);
     }
@@ -44,21 +49,35 @@ let SppdApp = class SppdApp extends LitElement {
           <div>
             <h1>SPPD Calculator</h1>
             <p>Rebuild of the original deck upgrade cost planner in Lit.</p>
-          </div>
+            </div>
           <div class="summary">
-            <div>Total cost: <strong>${totalCost}</strong></div>
-            <div>Buffer: <strong class=${buffer < 0 ? 'negative' : ''}>${buffer}</strong></div>
+          </div>
+          </section>
+          
+          <section class="controls">
+          <div class="control-box">
+            <div class="control-label">Available caps</div>
+            <input
+              type="number"
+              min="-99999"
+              max="99999"
+              step="1"
+              inputmode="numeric"
+              .value=${String(this.availableCaps)}
+              @input=${this.updateCaps}
+            />
+          </div>
+          <div class="control-box">
+            <div class="control-label">Total cost</div>
+            <div class="control-value">${totalCost}</div>
+          </div>
+          <div class="control-box">
+            <div class="control-label">Buffer</div>
+            <div class="control-value ${buffer < 0 ? 'negative' : ''}">${buffer}</div>
           </div>
         </section>
 
-        <section class="controls">
-          <label>
-            Available caps
-            <input type="number" min="0" .value=${String(this.availableCaps)} @input=${this.updateCaps} />
-          </label>          
-        </section>
-
-        <section class="grid" @card-change=${this.handleCardChange}>
+        <section class="grid" @card-change=${this.handleCardChange} @card-note-change=${this.handleNoteChange}>
           ${this.cards.map((card, index) => html `
             <card-panel
               style="grid-column: ${index % 4 + 1}; grid-row: ${Math.floor(index / 4) + 1};"
@@ -129,24 +148,49 @@ SppdApp.styles = css `
 
     .controls {
       display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-      align-items: center;
       flex-wrap: wrap;
+      gap: 0.75rem;
       padding: 1rem 1.25rem;
       background: #e5e7eb;
       color: #0f172a;
       border: 1px solid #d1d5db;
       border-radius: 1rem;
       box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+      align-items: center;
     }
 
-    label {
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
+    .control-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 0.8rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.75rem;
+      background: #f9fafb;
+      box-sizing: border-box;
+      min-height: 2.7rem;
+    }
+
+    .control-label {
       font-size: 0.95rem;
-      color: #475569;
+      font-weight: 700;
+      color: #334155;
+      white-space: nowrap;
+    }
+
+    .control-label::after {
+      content: ':';
+    }
+
+    .control-value {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #0f172a;
+      white-space: nowrap;
+    }
+
+    .control-value.negative {
+      color: #dc2626;
     }
 
     input[type='number'] {
@@ -154,7 +198,11 @@ SppdApp.styles = css `
       border-radius: 0.5rem;
       padding: 0.5rem 0.6rem;
       font: inherit;
-      min-width: 180px;
+      width: 100%;
+      box-sizing: border-box;
+      max-width: 100%;
+      min-width: 0;
+      text-align: left;
     }
 
     .grid {
