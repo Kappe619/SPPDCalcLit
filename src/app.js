@@ -25,11 +25,6 @@ let SppdApp = class SppdApp extends LitElement {
         const { cardId, rarity, level, note } = customEvent.detail;
         this.cards = this.cards.map((card) => card.id === cardId ? { ...card, rarity, level, note: note ?? card.note } : card);
     }
-    handleNoteChange(event) {
-        const customEvent = event;
-        const { cardId, note } = customEvent.detail;
-        this.cards = this.cards.map((card) => card.id === cardId ? { ...card, note: note ?? card.note } : card);
-    }
     getTotalCost() {
         return this.cards.reduce((sum, card) => sum + CARD_COSTS[card.rarity][card.level - 1], 0);
     }
@@ -60,11 +55,10 @@ let SppdApp = class SppdApp extends LitElement {
           <label>
             Available caps
             <input type="number" min="0" .value=${String(this.availableCaps)} @input=${this.updateCaps} />
-          </label>
-          <div>12 cards • live cost updates</div>
+          </label>          
         </section>
 
-        <section class="grid" @card-change=${this.handleCardChange} @card-note-change=${this.handleNoteChange}>
+        <section class="grid" @card-change=${this.handleCardChange}>
           ${this.cards.map((card, index) => html `
             <card-panel
               style="grid-column: ${index % 4 + 1}; grid-row: ${Math.floor(index / 4) + 1};"

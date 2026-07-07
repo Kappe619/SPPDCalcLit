@@ -171,7 +171,7 @@ export class SppdApp extends LitElement {
           </label>          
         </section>
 
-        <section class="grid" @card-change=${this.handleCardChange} @card-note-change=${this.handleNoteChange}>
+        <section class="grid" @card-change=${this.handleCardChange}>
           ${this.cards.map((card, index) => html`
             <card-panel
               style="grid-column: ${index % 4 + 1}; grid-row: ${Math.floor(index / 4) + 1};"
